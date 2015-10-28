@@ -33,9 +33,11 @@ defmodule Geocoding.CsvImporter do
   end
 
   defp to_dict(csv_row) do
-    @mapping
-    |> Enum.reduce(%{}, fn({attribute, index}, acc) ->
-      Dict.put(acc, attribute, Enum.at(csv_row, index))
-    end)
+    Enum.reduce(@mapping, %{}, &extract_columns(&1, &2, csv_row))
+  end
+
+  defp extract_columns({attribute, index}, acc, csv_row) do
+    value_at_index = csv_row |> Enum.at(index)
+    Dict.put(acc, attribute, value_at_index)
   end
 end
