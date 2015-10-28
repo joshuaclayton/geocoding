@@ -36,5 +36,4 @@ config :phoenix, :stacktrace_depth, 20
 config :geocoding, Geocoding.Repo,
   adapter: Ecto.Adapters.Postgres,
   database: "geocoding_dev",
-  hostname: "localhost",
   pool_size: 10

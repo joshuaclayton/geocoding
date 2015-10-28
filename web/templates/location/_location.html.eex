@@ -1,0 +1,12 @@
+<li data-id="<%= @location.id %>" class="location">
+  <header>
+    <h1 data-role="name"><%= @location.name %></h1>
+  </header>
+  <section>
+    <section class="location-info">
+      <p data-role="address"><%= address @location %></p><br>
+      <p data-role='phone-number'><%= link @location.phone_number, to: "tel:#{@location.phone_number}" %></p>
+    </section>
+
+  </section>
+</li>
