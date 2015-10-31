@@ -3,15 +3,17 @@ defmodule Geocoding.LocationController do
   alias Geocoding.Location
 
   def index(conn, %{"limit" => limit}) do
-    locations = Ecto.Query.from(l in Location, select: l, limit: ^limit)
-                |> Repo.all
-
-    render conn, "index.html", locations: locations
+    query = from(l in Location, select: l, limit: ^limit)
+    conn |> _index(query)
   end
 
   def index(conn, _params) do
-    locations = Repo.all(Location)
+    conn |> _index
+  end
 
-    render conn, "index.html", locations: locations
+  defp _index(conn, query \\ Location) do
+    render conn,
+      "index.html",
+      locations: query |> Repo.all
   end
 end
