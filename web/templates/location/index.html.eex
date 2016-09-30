@@ -1,5 +1,5 @@
-<ul class="locations">
-  <%= Enum.map @locations, fn(location) -> %>
-    <%= render "_location.html", location: location %>
-  <% end %>
-</ul>
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function(event) {
+    Elm.Main.fullscreen();
+  });
+</script>

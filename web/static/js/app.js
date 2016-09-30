@@ -11,7 +11,6 @@
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
-import "deps/phoenix_html/web/static/js/phoenix_html"
 
 // Import local files
 //
@@ -19,3 +18,6 @@ import "deps/phoenix_html/web/static/js/phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+import elm from "./elm/Main.elm"
+
+window.Elm = elm;
