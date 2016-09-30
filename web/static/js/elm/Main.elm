@@ -1,7 +1,8 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Html exposing (..)
 import Html.App
+import Html.Attributes exposing (id)
 
 
 type alias Store =
@@ -33,14 +34,20 @@ flagsToModel flags =
         List.map flagToStore flags.locations
 
 
+port initialized : () -> Cmd a
+
+
 init : Flags -> ( Model, Cmd a )
 init flags =
-    ( flagsToModel flags, Cmd.none )
+    ( flagsToModel flags, initialized () )
 
 
 view : Model -> Html a
 view model =
-    ul [] <| List.map storeEntry model
+    div []
+        [ ul [] <| List.map storeEntry model
+        , div [ id "map" ] []
+        ]
 
 
 storeEntry : Store -> Html a
