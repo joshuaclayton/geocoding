@@ -61,14 +61,19 @@ init flags =
 view : Model -> Html Msg
 view model =
     div []
-        [ ul [] <| List.map storeEntry model.stores
+        [ ul [] <| List.map (storeEntry model.selectedStore) model.stores
         , div [ id "map" ] []
         ]
 
 
-storeEntry : Store -> Html Msg
-storeEntry store =
-    li [ onClick (Selected store) ] [ text store.name ]
+storeEntry : Maybe Store -> Store -> Html Msg
+storeEntry mstore store =
+    case Maybe.map ((==) store) mstore of
+        Just True ->
+            li [ onClick (Selected store) ] [ b [] [ text store.name ] ]
+
+        _ ->
+            li [ onClick (Selected store) ] [ text store.name ]
 
 
 type Msg
