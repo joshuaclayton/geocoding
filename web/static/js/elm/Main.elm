@@ -6,6 +6,12 @@ import Html.Attributes exposing (id)
 import Html.Events exposing (onClick)
 
 
+type alias Model =
+    { stores : List Store
+    , selectedStore : Maybe Store
+    }
+
+
 type alias Store =
     { name : String
     , latLong : LatLong
@@ -17,10 +23,9 @@ type alias LatLong =
     ( Float, Float )
 
 
-type alias Model =
-    { stores : List Store
-    , selectedStore : Maybe Store
-    }
+type Msg
+    = Selected Store
+    | SelectedMarker { lat : Float, lng : Float }
 
 
 type alias Flags =
@@ -33,20 +38,8 @@ flagsToModel flags =
     let
         flagToStore f =
             Store f.name ( f.lat, f.long ) f.phone
-
-        stores =
-            List.map flagToStore flags.locations
     in
-        Model stores Nothing
-
-
-port initialized : List LatLong -> Cmd a
-
-
-port selectedStore : Store -> Cmd a
-
-
-port clickedMapMarker : ({ lat : Float, lng : Float } -> msg) -> Sub msg
+        Model (List.map flagToStore flags.locations) Nothing
 
 
 init : Flags -> ( Model, Cmd a )
@@ -79,11 +72,6 @@ storeEntry mstore store =
             li [ onClick (Selected store) ] [ text store.name ]
 
 
-type Msg
-    = Selected Store
-    | SelectedMarker { lat : Float, lng : Float }
-
-
 update : Msg -> Model -> ( Model, Cmd a )
 update msg model =
     case msg of
@@ -114,3 +102,12 @@ main =
         , view = view
         , subscriptions = (\_ -> clickedMapMarker SelectedMarker)
         }
+
+
+port initialized : List LatLong -> Cmd a
+
+
+port selectedStore : Store -> Cmd a
+
+
+port clickedMapMarker : ({ lat : Float, lng : Float } -> msg) -> Sub msg
