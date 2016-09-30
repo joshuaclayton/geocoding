@@ -3,6 +3,7 @@ port module Main exposing (..)
 import Html exposing (..)
 import Html.App
 import Html.Attributes exposing (id)
+import Html.Events exposing (onClick)
 
 
 type alias Store =
@@ -17,7 +18,9 @@ type alias LatLong =
 
 
 type alias Model =
-    List Store
+    { stores : List Store
+    , selectedStore : Maybe Store
+    }
 
 
 type alias Flags =
@@ -30,11 +33,17 @@ flagsToModel flags =
     let
         flagToStore f =
             Store f.name ( f.lat, f.long ) f.phone
+
+        stores =
+            List.map flagToStore flags.locations
     in
-        List.map flagToStore flags.locations
+        Model stores Nothing
 
 
 port initialized : List LatLong -> Cmd a
+
+
+port selectedStore : Store -> Cmd a
 
 
 init : Flags -> ( Model, Cmd a )
@@ -44,29 +53,40 @@ init flags =
             flagsToModel flags
 
         latLngs =
-            List.map .latLong model
+            List.map .latLong model.stores
     in
         ( flagsToModel flags, initialized latLngs )
 
 
-view : Model -> Html a
+view : Model -> Html Msg
 view model =
     div []
-        [ ul [] <| List.map storeEntry model
+        [ ul [] <| List.map storeEntry model.stores
         , div [ id "map" ] []
         ]
 
 
-storeEntry : Store -> Html a
+storeEntry : Store -> Html Msg
 storeEntry store =
-    li [] [ text store.name ]
+    li [ onClick (Selected store) ] [ text store.name ]
+
+
+type Msg
+    = Selected Store
+
+
+update : Msg -> Model -> ( Model, Cmd a )
+update msg model =
+    case msg of
+        Selected store ->
+            ( { model | selectedStore = Just store }, selectedStore store )
 
 
 main : Program Flags
 main =
     Html.App.programWithFlags
         { init = init
-        , update = (\_ m -> ( m, Cmd.none ))
+        , update = update
         , view = view
         , subscriptions = (\_ -> Sub.none)
         }

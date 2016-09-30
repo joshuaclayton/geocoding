@@ -1,5 +1,30 @@
 <script src="https://maps.googleapis.com/maps/api/js"></script>
 <script type="text/javascript">
+  function isEquivalent(a, b) {
+    // Create arrays of property names
+    var aProps = Object.getOwnPropertyNames(a);
+    var bProps = Object.getOwnPropertyNames(b);
+
+    // If number of properties is different,
+    // objects are not equivalent
+    if (aProps.length != bProps.length) {
+      return false;
+    }
+
+    for (var i = 0; i < aProps.length; i++) {
+      var propName = aProps[i];
+
+      // If values of same property are not equal,
+      // objects are not equivalent
+      if (a[propName] !== b[propName]) {
+        return false;
+      }
+    }
+
+    // If we made it this far, objects
+    // are considered equivalent
+    return true;
+  };
   document.addEventListener("DOMContentLoaded", function(event) {
     var app = Elm.Main.fullscreen({
       locations: [
@@ -10,23 +35,48 @@
     });
 
     var map;
+    var markers = [];
+    var latLngs = [];
 
-    app.ports.initialized.subscribe(function(latLngs) {
+    app.ports.selectedStore.subscribe(function(store) {
+      map.setCenter({lat: store.latLong[0], lng: store.latLong[1]});
+      map.setZoom(12);
+      renderMarkers(latLngs, {lat: store.latLong[0], lng: store.latLong[1]});
+    });
+
+    var renderMarkers = function(_latLngs, selected) {
+      markers.forEach(function(m) { m.setMap(null); });
+
+      _latLngs.forEach(function(i) {
+        var newMarker = new google.maps.Marker({
+          position: {lat: i[0], lng: i[1]},
+          map: map
+        });
+
+        if (selected && isEquivalent(selected, {lat: i[0], lng: i[1]})) {
+          newMarker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+
+        markers.push(newMarker);
+      });
+    };
+
+    var fitBoundsFromLatLngs = function(_map, _latLngs) {
       var bounds = new google.maps.LatLngBounds();
-      latLngs.forEach(function(i) {
+
+      _latLngs.forEach(function(i) {
         bounds.extend({lat: i[0], lng: i[1]});
       });
 
+      _map.fitBounds(bounds);
+    };
+
+    app.ports.initialized.subscribe(function(_latLngs) {
+      latLngs = _latLngs;
       window.requestAnimationFrame(function() {
         map = new google.maps.Map(document.getElementById('map'), {});
-        map.fitBounds(bounds);
-
-        latLngs.forEach(function(i) {
-          new google.maps.Marker({
-              position: {lat: i[0], lng: i[1]},
-              map: map
-            });
-        });
+        fitBoundsFromLatLngs(map, latLngs);
+        renderMarkers(latLngs);
       });
     });
   });
