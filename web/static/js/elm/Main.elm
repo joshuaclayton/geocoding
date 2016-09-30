@@ -46,6 +46,9 @@ port initialized : List LatLong -> Cmd a
 port selectedStore : Store -> Cmd a
 
 
+port clickedMapMarker : ({ lat : Float, lng : Float } -> msg) -> Sub msg
+
+
 init : Flags -> ( Model, Cmd a )
 init flags =
     let
@@ -78,6 +81,7 @@ storeEntry mstore store =
 
 type Msg
     = Selected Store
+    | SelectedMarker { lat : Float, lng : Float }
 
 
 update : Msg -> Model -> ( Model, Cmd a )
@@ -86,6 +90,21 @@ update msg model =
         Selected store ->
             ( { model | selectedStore = Just store }, selectedStore store )
 
+        SelectedMarker marker ->
+            let
+                find f =
+                    List.head << List.filter f
+
+                store =
+                    find (\s -> (fst s.latLong) == marker.lat && (snd s.latLong) == marker.lng) model.stores
+            in
+                case store of
+                    Just store' ->
+                        ( { model | selectedStore = store }, selectedStore store' )
+
+                    Nothing ->
+                        ( { model | selectedStore = store }, Cmd.none )
+
 
 main : Program Flags
 main =
@@ -93,5 +112,5 @@ main =
         { init = init
         , update = update
         , view = view
-        , subscriptions = (\_ -> Sub.none)
+        , subscriptions = (\_ -> clickedMapMarker SelectedMarker)
         }

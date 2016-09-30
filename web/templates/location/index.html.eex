@@ -39,7 +39,7 @@
     var latLngs = [];
 
     app.ports.selectedStore.subscribe(function(store) {
-      map.setCenter({lat: store.latLong[0], lng: store.latLong[1]});
+      map.panTo({lat: store.latLong[0], lng: store.latLong[1]});
       map.setZoom(12);
       renderMarkers(latLngs, {lat: store.latLong[0], lng: store.latLong[1]});
     });
@@ -48,12 +48,17 @@
       markers.forEach(function(m) { m.setMap(null); });
 
       _latLngs.forEach(function(i) {
+        var oLatLng = {lat: i[0], lng: i[1]};
         var newMarker = new google.maps.Marker({
-          position: {lat: i[0], lng: i[1]},
+          position: oLatLng,
           map: map
         });
 
-        if (selected && isEquivalent(selected, {lat: i[0], lng: i[1]})) {
+        newMarker.addListener('click', function() {
+          app.ports.clickedMapMarker.send(oLatLng);
+        });
+
+        if (selected && isEquivalent(selected, oLatLng)) {
           newMarker.setAnimation(google.maps.Animation.BOUNCE);
         }
 
