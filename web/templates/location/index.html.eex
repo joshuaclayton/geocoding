@@ -1,5 +1,11 @@
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function(event) {
-    Elm.Main.fullscreen();
+    Elm.Main.fullscreen({
+      locations: [
+        <%= Enum.map @locations, fn(location) -> %>
+          { name: "<%= location.name %>", lat: <%= location.latitude %>, long: <%= location.longitude %>, phone: "<%= location.phone_number %>" },
+        <% end %>
+      ]
+    });
   });
 </script>
