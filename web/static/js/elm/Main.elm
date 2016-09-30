@@ -34,12 +34,19 @@ flagsToModel flags =
         List.map flagToStore flags.locations
 
 
-port initialized : () -> Cmd a
+port initialized : List LatLong -> Cmd a
 
 
 init : Flags -> ( Model, Cmd a )
 init flags =
-    ( flagsToModel flags, initialized () )
+    let
+        model =
+            flagsToModel flags
+
+        latLngs =
+            List.map .latLong model
+    in
+        ( flagsToModel flags, initialized latLngs )
 
 
 view : Model -> Html a
