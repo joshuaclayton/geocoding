@@ -1,8 +1,14 @@
 module Main exposing (..)
 
 import Html exposing (..)
+import Html.App
 
 
-main : Html String
+main : Program Never
 main =
-    div [] [ text "well, hello world" ]
+    Html.App.program
+        { init = ( "", Cmd.none )
+        , update = (\_ m -> ( m, Cmd.none ))
+        , view = (\_ -> div [] [ text "well, hello world" ])
+        , subscriptions = (\_ -> Sub.none)
+        }
