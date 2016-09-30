@@ -7,6 +7,7 @@ use Mix.Config
 
 # Configures the endpoint
 config :geocoding, Geocoding.Endpoint,
+  namespace: Geocoding.App,
   url: [host: "localhost"],
   root: Path.dirname(__DIR__),
   secret_key_base: "F/ETKVEZllY0iah1sVSdNwtMamrKzi90urvXhklr9YpaUEvqRFfiMes5TJsZu7NS",

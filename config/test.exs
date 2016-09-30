@@ -12,8 +12,6 @@ config :logger, level: :warn
 # Configure your database
 config :geocoding, Geocoding.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
   database: "geocoding_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

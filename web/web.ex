@@ -18,7 +18,7 @@ defmodule Geocoding.Web do
 
   def model do
     quote do
-      use Ecto.Model
+      use Ecto.Schema
 
       import Ecto.Changeset
       import Ecto.Query, only: [from: 1, from: 2]
@@ -30,7 +30,7 @@ defmodule Geocoding.Web do
       use Phoenix.Controller
 
       alias Geocoding.Repo
-      import Ecto.Model
+      import Ecto.Schema
       import Ecto.Query, only: [from: 1, from: 2]
 
       import Geocoding.Router.Helpers
@@ -62,7 +62,7 @@ defmodule Geocoding.Web do
       use Phoenix.Channel
 
       alias Geocoding.Repo
-      import Ecto.Model
+      import Ecto.Schema
       import Ecto.Query, only: [from: 1, from: 2]
     end
   end

@@ -21,7 +21,7 @@ defmodule Geocoding.ChannelCase do
       use Phoenix.ChannelTest
 
       alias Geocoding.Repo
-      import Ecto.Model
+      import Ecto.Schema
       import Ecto.Query, only: [from: 2]
 
 
@@ -31,8 +31,10 @@ defmodule Geocoding.ChannelCase do
   end
 
   setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Geocoding.Repo)
+
     unless tags[:async] do
-      Ecto.Adapters.SQL.restart_test_transaction(Geocoding.Repo, [])
+      Ecto.Adapters.SQL.Sandbox.mode(Geocoding.Repo, {:shared, self()})
     end
 
     :ok

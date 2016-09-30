@@ -21,7 +21,7 @@ defmodule Geocoding.ConnCase do
       use Phoenix.ConnTest
 
       alias Geocoding.Repo
-      import Ecto.Model
+      import Ecto.Schema
       import Ecto.Query, only: [from: 2]
 
       import Geocoding.Router.Helpers
@@ -32,10 +32,12 @@ defmodule Geocoding.ConnCase do
   end
 
   setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Geocoding.Repo)
+
     unless tags[:async] do
-      Ecto.Adapters.SQL.restart_test_transaction(Geocoding.Repo, [])
+      Ecto.Adapters.SQL.Sandbox.mode(Geocoding.Repo, {:shared, self()})
     end
 
-    :ok
+    {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end
